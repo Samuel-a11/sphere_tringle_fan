@@ -181,23 +181,23 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         return new float[] {
                 //Tri1
                 (float) (vertexPoints[0][0]),(float) (vertexPoints[0][1]), (float) (vertexPoints[0][2]),
-                0.0f, 0.0f, 0.2f, 1.0f,
+                0.8f, 0.1f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[1][0]),(float) (vertexPoints[1][1]), (float) (vertexPoints[1][2]),
-                0.8f, 0.1f, 0.2f, 1.0f,
+                0.8f, 0.2f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[3][0]),(float) (vertexPoints[3][1]), (float) (vertexPoints[3][2]),
-                0.8f, 0.1f, 0.2f, 1.0f,
+                0.8f, 0.4f, 0.2f, 1.0f,
 
                 //tri2
                 (float) (vertexPoints[3][0]),(float) (vertexPoints[3][1]), (float) (vertexPoints[3][2]),
-                0.8f, 0.1f, 0.2f, 1.0f,
+                0.8f, 0.5f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[1][0]),(float) (vertexPoints[1][1]), (float) (vertexPoints[1][2]),
-                0.8f, 0.1f, 0.2f, 1.0f,
+                0.8f, 0.6f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[2][0]),(float) (vertexPoints[2][1]), (float) (vertexPoints[2][2]),
-                0.0f, 0.0f, 0.2f, 1.0f,};
+                0.8f, 0.7f, 0.2f, 1.0f,};
     }
 
     private double[] sphereToXYZ(double[] p) {
