@@ -181,23 +181,23 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         return new float[] {
                 //Tri1
                 (float) (vertexPoints[0][0]),(float) (vertexPoints[0][1]), (float) (vertexPoints[0][2]),
-                color, color, color, 1.0f,
+                0.0f, 0.0f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[1][0]),(float) (vertexPoints[1][1]), (float) (vertexPoints[1][2]),
-                color, color, color, 1.0f,
+                0.8f, 0.1f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[3][0]),(float) (vertexPoints[3][1]), (float) (vertexPoints[3][2]),
-                color, color, color, 1.0f,
+                0.8f, 0.1f, 0.2f, 1.0f,
 
                 //tri2
                 (float) (vertexPoints[3][0]),(float) (vertexPoints[3][1]), (float) (vertexPoints[3][2]),
-                color, color, color, 1.0f,
+                0.8f, 0.1f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[1][0]),(float) (vertexPoints[1][1]), (float) (vertexPoints[1][2]),
-                color, color, color, 1.0f,
+                0.8f, 0.1f, 0.2f, 1.0f,
 
                 (float) (vertexPoints[2][0]),(float) (vertexPoints[2][1]), (float) (vertexPoints[2][2]),
-                color, color, color, 1.0f,};
+                0.0f, 0.0f, 0.2f, 1.0f,};
     }
 
     private double[] sphereToXYZ(double[] p) {
@@ -233,11 +233,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Se cambio
         int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
-<<<<<<< HEAD
-        //int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
-=======
+//<<<<<<< HEAD
+        //int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_FAN);
+//=======
 //        int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
->>>>>>> 26ec400415f5db87ff93e8e7b4fb7dff629120e5
+//  >>>>>>> 26ec400415f5db87ff93e8e7b4fb7dff629120e5
+
+
 
         if (vertexShaderHandle != 0) {
             // Pass in the shader source.
