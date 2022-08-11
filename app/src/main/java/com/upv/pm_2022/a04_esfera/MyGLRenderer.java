@@ -192,11 +192,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
+        // Se cambia la esfera
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0,  6 * (int) Math.pow(4, zoom));
-//        for (int i = 0; i < traps.size(); i++) {
-//            drawTriangle(traps.get(i).getTri1());
-//            drawTriangle(traps.get(i).getTri2());
-//        }
+        //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0,  6 * (int) Math.pow(4, zoom));
+        //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0,  6 * (int) Math.pow(4, zoom));
+        /*for (int i = 0; i < traps.size(); i++) {
+            drawTriangle(traps.get(i).getTri1());
+            drawTriangle(traps.get(i).getTri2());
+        }*/
     }
 
 
@@ -277,8 +280,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
 
         // Se cambio
-        //int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
-        int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
+        int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
+        //int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
 
         if (vertexShaderHandle != 0) {
             // Pass in the shader source.
