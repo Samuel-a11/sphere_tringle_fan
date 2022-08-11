@@ -5,15 +5,9 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
-
-
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Random;
-
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -21,61 +15,40 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by GabrielK on 6/21/2016.
  */
 public class MyGLRenderer implements GLSurfaceView.Renderer {
-
-
-
     private int zoom;
     private int programHandle;
     private float[] mModelMatrix = new float[16];
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
-
-
     // floats per trapezoid = 7 floats per vertex * 3 vertices per triangle * 2 triangles per trapezoid
     private final int floatsPerTrap = 42;
-
     /** How many bytes per float. */
     private final int mBytesPerFloat = 4;
-
     /** How many elements per vertex. */
     private final int mStrideBytes = 7 * mBytesPerFloat;
-
     /** Offset of the position data. */
     private final int mPositionOffset = 0;
-
     /** Size of the position data in elements. */
     private final int mPositionDataSize = 3;
-
     /** Offset of the color data. */
     private final int mColorOffset = 3;
-
     /** Size of the color data in elements. */
     private final int mColorDataSize = 4;
-
     /** This will be used to pass in the transformation matrix. */
     private int mMVPMatrixHandle;
-
     /** This will be used to pass in model position information. */
     private int mPositionHandle;
-
     /** This will be used to pass in model color information. */
     private int mColorHandle;
-
-
-
-
     //private FloatBuffer vertexBuffer;
 
     public MyGLRenderer(int zoom) {
         this.zoom = zoom;
     }
-
-
-    public void zoom(int z) {
-        zoom = z;
-        setUp();
-    }
+    public void zoom(int z) { zoom=z; setUp(); }
+    public int zoom_in()    { zoom++; setUp(); return zoom; }
+    public int zoom_out()   { zoom--; setUp(); return zoom; }
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -97,9 +70,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     private void setUp() {
         //Random r = new Random();
-
         //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 2f, 0, 0, -5, 0, 1, 0);
-
 
         float [] verticesData = new float [floatsPerTrap * (int) Math.pow(4, zoom)];
 
@@ -107,12 +78,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             for (int j = 0; j < Math.pow(2, zoom); j++)
                 System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i * Math.pow(2, zoom) + j) * floatsPerTrap, floatsPerTrap);
 
-
         FloatBuffer vertexBuffer = ByteBuffer.allocateDirect(verticesData.length * mBytesPerFloat)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
         vertexBuffer.put(verticesData).position(0);
-
 
         final int vertexBufferIdx;
         final int buffers[] = new int[1];
@@ -122,7 +91,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         vertexBufferIdx = buffers[0];
-
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferIdx);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -135,13 +103,10 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
-
 //        vertexBuffer.position(mPositionOffset);
-//
 //
 //        GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false,
 //                mStrideBytes, vertexBuffer);
-//
 //
 //        GLES20.glEnableVertexAttribArray(mPositionHandle);
 //
@@ -153,11 +118,9 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 //        GLES20.glEnableVertexAttribArray(mColorHandle);
     }
 
-
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
-
         // Create a new perspective projection matrix. The height will stay the same
         // while the width will vary as per aspect ratio.
         final float ratio = (float) width / height;
@@ -167,7 +130,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         final float top = 1.0f;
         final float near = 1.0f;
         final float far = 10.0f;
-
         Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
     }
 
@@ -180,8 +142,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Draw the triangle facing straight on.
         Matrix.setIdentityM(mModelMatrix, 0);
-        Matrix.rotateM(mModelMatrix, 0, angleInDegrees, -0.5f, 1.0f, 0.25f);
-
+        // Uncomment to rotate
+//        Matrix.rotateM(mModelMatrix, 0, angleInDegrees, -0.5f, 1.0f, 0.25f);
 
         // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
         // (which currently contains model * view).
@@ -202,14 +164,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }*/
     }
 
-
-
     private float[] getVertexData(int row, int col) {
         double inc = Math.PI * 2 / Math.pow(2, zoom);
         double theta = row * inc - Math.PI;
         //phi = col * inc - Math.PI;
         double phi = col * inc / 2;
-
 
         //float color = (float) ((theta + Math.PI) / (2 * Math.PI));
         float color = (float) ((Math.abs(theta/Math.PI))/2 + (Math.abs((phi - Math.PI/2)/(Math.PI/2)))/2);
@@ -244,21 +203,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private double[] sphereToXYZ(double[] p) {
         if (p.length != 2)
             Log.e("DEBUG", "you dun goofed");
-
-        return new double[] {Math.cos(p[0]) * Math.sin(p[1]), Math.sin(p[0]) * Math.sin(p[1]), Math.cos(p[1])};
-
+        return new double[] { Math.cos(p[0]) * Math.sin(p[1]), Math.sin(p[0]) * Math.sin(p[1]),
+                              Math.cos(p[1]) };
     }
 
     public int getProgram() {
-
         final String vertexShader =
                 "uniform mat4 u_MVPMatrix;      \n"     // A constant representing the combined model/view/projection matrix.
-
                         + "attribute vec4 a_Position;     \n"     // Per-vertex position information we will pass in.
                         + "attribute vec4 a_Color;        \n"     // Per-vertex color information we will pass in.
-
                         + "varying vec4 v_Color;          \n"     // This will be passed into the fragment shader.
-
                         + "void main()                    \n"     // The entry point for our vertex shader.
                         + "{                              \n"
                         + "   v_Color = a_Color;          \n"     // Pass the color through to the fragment shader.
@@ -277,11 +231,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         + "   gl_FragColor = v_Color;     \n"     // Pass the color directly through the pipeline.
                         + "}                              \n";
 
-
-
         // Se cambio
         int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
+<<<<<<< HEAD
         //int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
+=======
+//        int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
+>>>>>>> 26ec400415f5db87ff93e8e7b4fb7dff629120e5
 
         if (vertexShaderHandle != 0) {
             // Pass in the shader source.
@@ -327,9 +283,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             }
         }
 
-        if (fragmentShaderHandle == 0) {
+        if (fragmentShaderHandle == 0)
             throw new RuntimeException("Error creating fragment shader.");
-        }
 
         // Create a program object and store the handle to it.
         int programHandle = GLES20.glCreateProgram();
@@ -352,18 +307,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             final int[] linkStatus = new int[1];
             GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
 
-            // If the link failed, delete the program.
-            if (linkStatus[0] == 0) {
+            if (linkStatus[0] == 0) { // If the link failed, delete the program.
                 GLES20.glDeleteProgram(programHandle);
                 programHandle = 0;
             }
         }
-
-        if (programHandle == 0) {
+        if (programHandle == 0)
             throw new RuntimeException("Error creating program.");
-        }
-
         return programHandle;
-
     }
 }
