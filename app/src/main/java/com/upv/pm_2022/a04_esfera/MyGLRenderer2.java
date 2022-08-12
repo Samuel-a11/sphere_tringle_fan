@@ -14,7 +14,8 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by GabrielK on 6/21/2016.
  */
-public class MyGLRenderer implements GLSurfaceView.Renderer {
+public class MyGLRenderer2 implements GLSurfaceView.Renderer {
+    private Triangle triangle;
     private int zoom;
     private int programHandle;
     private float[] mModelMatrix = new float[16];
@@ -43,7 +44,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     private int mColorHandle;
     //private FloatBuffer vertexBuffer;
 
-    public MyGLRenderer(int zoom) {
+    public MyGLRenderer2(int zoom) {
         this.zoom = zoom;
     }
     public void zoom(int z) { zoom=z; setUp(); }
@@ -52,6 +53,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        triangle = new Triangle();
         GLES20.glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
@@ -67,17 +69,40 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         setUp();
     }
 
-    private void setUp() {
+    public void setUp() {
         //Random r = new Random();
         //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 2f, 0, 0, -5, 0, 1, 0);
 
         float [] verticesData = new float [floatsPerTrap * (int) Math.pow(4, zoom)];
 
         for (int i = 0; i < Math.pow(2, zoom); i++)
-            //System.arraycopy(getVertexData(i, i), 0, verticesData, (int) (i * Math.pow(2, zoom) + i) * floatsPerTrap, floatsPerTrap);
             for (int j = 0; j < Math.pow(2, zoom); j++)
-                System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i * Math.pow(2, zoom) + j) * floatsPerTrap, floatsPerTrap);
+                //System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i * Math.pow(2, zoom) + j) * floatsPerTrap, floatsPerTrap);
+                System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i) * floatsPerTrap, floatsPerTrap);
 
+
+        /*float [] verticesData = {
+                (float) (0),(float) (1f), (float) (-0.5f),
+                0.8f, 0.1f, 0.2f, 1.0f,
+
+                (float) (0),(float) (1f), (float) (-0.5f),
+                0.8f, 0.1f, 0.2f, 1.0f,
+
+                (float) (0),(float) (1f), (float) (-0.5f),
+                0.8f, 0.1f, 0.2f, 1.0f,
+
+                (float) (0),(float) (1f), (float) (-0.5f),
+                0.8f, 0.1f, 0.2f, 1.0f,
+
+                (float) (0),(float) (1f), (float) (-0.5f),
+                0.8f, 0.1f, 0.2f, 1.0f,
+
+                (float) (0),(float) (1f), (float) (-0.5f),
+                0.8f, 0.1f, 0.2f, 1.0f,
+        };*/
+        //for(int i = 0; i < 4;i++) {
+
+        //}
         FloatBuffer vertexBuffer = ByteBuffer.allocateDirect(verticesData.length * mBytesPerFloat)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
@@ -88,34 +113,21 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES20.glGenBuffers(1, buffers, 0);
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[0]);
         GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, vertexBuffer.capacity() * mBytesPerFloat, vertexBuffer, GLES20.GL_STATIC_DRAW);
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
 
         vertexBufferIdx = buffers[0];
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferIdx);
+        // a lo mejor posicion
+            //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferIdx);
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false, mStrideBytes, 0);
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferIdx);
+        // Aqui se agrega los colores a la figura
+            //GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vertexBufferIdx);
         GLES20.glEnableVertexAttribArray(mColorHandle);
         GLES20.glVertexAttribPointer(mColorHandle, mColorDataSize, GLES20.GL_FLOAT, false,
                 mStrideBytes, mPositionDataSize * mBytesPerFloat);
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
-
-//        vertexBuffer.position(mPositionOffset);
-//
-//        GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false,
-//                mStrideBytes, vertexBuffer);
-//
-//        GLES20.glEnableVertexAttribArray(mPositionHandle);
-//
-//        vertexBuffer.position(mColorOffset);
-//
-//        GLES20.glVertexAttribPointer(mColorHandle, mColorDataSize, GLES20.GL_FLOAT, false,
-//                mStrideBytes, vertexBuffer);
-//
-//        GLES20.glEnableVertexAttribArray(mColorHandle);
     }
 
     @Override
@@ -135,25 +147,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
-
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
-        Matrix.setIdentityM(mModelMatrix, 0);
         long time = SystemClock.uptimeMillis() % 10000L;
-        float angleInDegrees = (360.0f / 5000.0f) * ((int) time);
-
-        // Draw the triangle facing straight on.
-        Matrix.setIdentityM(mModelMatrix, 0);
-        // Uncomment to rotate
-        Matrix.rotateM(mModelMatrix, 0, angleInDegrees, -0.5f, 1.0f, 0.25f);
-
-        // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
-        // (which currently contains model * view).
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-
-        // This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
-        // (which now contains model * view * projection).
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
         // Se cambia la esfera
         /*for( int i = 0; i < (6 * (int) Math.pow(4, zoom))-2; i++) {
@@ -162,7 +157,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         }*/
         //GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0,  6 * (int) Math.pow(4, zoom));
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 6 * (int) Math.pow(4, zoom));
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0,  6 * (int) Math.pow(4, zoom));
         //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0,  6 * (int) Math.pow(4, zoom));
         //GLES20.glDrawArrays(GLES20.GL_LINES, 0,  6 * (int) Math.pow(4, zoom));
 
@@ -170,22 +165,35 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             drawTriangle(traps.get(i).getTri1());
             drawTriangle(traps.get(i).getTri2());
         }*/
+        triangle.draw(gl);
     }
 
     private float[] getVertexData(int row, int col) {
         double inc = Math.PI * 2 / Math.pow(2, zoom);
         double theta = row * inc - Math.PI;
-        //phi = col * inc - Math.PI;
+        //double phi = col * inc - Math.PI*2;
         double phi = col * inc / 2;
 
         //float color = (float) ((theta + Math.PI) / (2 * Math.PI));
         float color = (float) ((Math.abs(theta/Math.PI))/2 + (Math.abs((phi - Math.PI/2)/(Math.PI/2)))/2);
 
-        double[][] spherePoints = new double[][] {{theta, phi}, {theta + inc, phi}, {theta + inc, phi + inc / 2}, {theta, phi + inc / 2}};
+        double[][] spherePoints = new double[][] {  {theta,       phi},
+                                                    {theta + inc, phi},
+                                                    {theta + inc, phi + inc / 2},
+                                                    {theta,       phi + inc / 2}
+                                                 };
+ /*
+        double[][] spherePoints = new double[][] {  {0,       0.5},
+                {0, 0.5},
+                {0, 0.5},
+                {0,       0.5}
+        };*/
         double[][] vertexPoints = new double[4][3];
         for (int i = 0; i < spherePoints.length; i ++)
+            //vertexPoints[i] = new double[]{5,8,4};
             vertexPoints[i] = sphereToXYZ(spherePoints[i]);
 
+        // poner en un for
         return new float[] {
                 //Tri1
                 (float) (vertexPoints[0][0]),(float) (vertexPoints[0][1]), (float) (vertexPoints[0][2]),
@@ -212,7 +220,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         if (p.length != 2)
             Log.e("DEBUG", "you dun goofed");
         return new double[] { Math.cos(p[0]) * Math.sin(p[1]), Math.sin(p[0]) * Math.sin(p[1]),
-                              Math.cos(p[1]) };
+                Math.cos(p[1]) };
     }
 
     public int getProgram() {
@@ -225,8 +233,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
                         + "{                              \n"
                         + "   v_Color = a_Color;          \n"     // Pass the color through to the fragment shader.
                         // It will be interpolated across the triangle.
-                        + "   gl_Position = u_MVPMatrix   \n"     // gl_Position is a special variable used to store the final position.
-                        + "               * a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
+                        + "   gl_Position = a_Position;   \n"     // gl_Position is a special variable used to store the final position.
+                        //+ "               * a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
                         + "}                              \n";    // normalized screen coordinates.
 
         final String fragmentShader =
@@ -241,13 +249,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
         // Se cambio
         int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
-//<<<<<<< HEAD
-        //int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_FAN);
-//=======
-//        int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_TRIANGLE_STRIP);
-//  >>>>>>> 26ec400415f5db87ff93e8e7b4fb7dff629120e5
-
-
 
         if (vertexShaderHandle != 0) {
             // Pass in the shader source.
