@@ -320,4 +320,39 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
             throw new RuntimeException("Error creating program.");
         return programHandle;
     }
+
+    public void drawCircle(float x, float y, float z, float r, int sides) {
+        int nVertices = sides + 2;
+
+        float[] verticesX = new float[nVertices];
+        float[] verticesY = new float[nVertices];
+        float[] verticesZ = new float[nVertices];
+
+        verticesX[0] = x;
+        verticesY[0] = y;
+        verticesZ[0] = z;
+
+        for(int i = 1; i < nVertices; i++) {
+            verticesX[i] = x + r * (float) Math.cos(i * 2 * Math.PI / sides);
+            verticesX[i] = y + r * (float) Math.sin(i * 2 * Math.PI / sides);
+            verticesZ[i] = z;
+        }
+
+        float[] allVertices = new float[3 * nVertices];
+
+        for(int i = 0; i < nVertices; i++) {
+            allVertices[i * 3] = verticesX[i];
+            allVertices[i * 3 + 1] = verticesY[i];
+            allVertices[i * 3 + 2] = verticesZ[i];
+        }
+
+        FloatBuffer buffer = makeFloatBuffer(allVertices);
+        vertexData  = ByteBuffer.allocateDirect(allVertices.length * BYTES_PER_FLOAT)
+                .order(ByteOrder.nativeOrder())
+                .asFloatBuffer();
+
+        // Color de la figura, Parametros 2, 3, 4 son RGB, cambiarlos aleatoriamente
+        GLES20.glUniform4f(0, 0.0f, 0.0f, 1.0f, 1.0f);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, nVertices);
+    }
 }
