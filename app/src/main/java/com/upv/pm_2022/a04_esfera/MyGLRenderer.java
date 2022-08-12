@@ -158,6 +158,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0,  6 * (int) Math.pow(4, zoom));
         //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0,  6 * (int) Math.pow(4, zoom));
         //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0,  6 * (int) Math.pow(4, zoom));
+        //GLES20.glDrawArrays(GLES20.GL_LINES, 0,  6 * (int) Math.pow(4, zoom));
+
         /*for (int i = 0; i < traps.size(); i++) {
             drawTriangle(traps.get(i).getTri1());
             drawTriangle(traps.get(i).getTri2());
