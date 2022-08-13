@@ -76,9 +76,10 @@ public class MyGLRenderer2 implements GLSurfaceView.Renderer {
         float [] verticesData = new float [floatsPerTrap * (int) Math.pow(4, zoom)];
 
         for (int i = 0; i < Math.pow(2, zoom); i++)
-            for (int j = 0; j < Math.pow(2, zoom); j++)
+            System.arraycopy(getVertexData(i, 1), 0, verticesData, 0, floatsPerTrap);
+            /*for (int j = 0; j < Math.pow(2, zoom); j++)
                 //System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i * Math.pow(2, zoom) + j) * floatsPerTrap, floatsPerTrap);
-                System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i) * floatsPerTrap, floatsPerTrap);
+                System.arraycopy(getVertexData(i, j), 0, verticesData, (int) (i) * floatsPerTrap, floatsPerTrap);*/
 
 
         /*float [] verticesData = {
@@ -157,7 +158,7 @@ public class MyGLRenderer2 implements GLSurfaceView.Renderer {
         }*/
         //GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0,  6 * (int) Math.pow(4, zoom));
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0,  6 * (int) Math.pow(4, zoom));
+        //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0,  6 * (int) Math.pow(4, zoom));
         //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0,  6 * (int) Math.pow(4, zoom));
         //GLES20.glDrawArrays(GLES20.GL_LINES, 0,  6 * (int) Math.pow(4, zoom));
 
@@ -169,8 +170,8 @@ public class MyGLRenderer2 implements GLSurfaceView.Renderer {
     }
 
     private float[] getVertexData(int row, int col) {
-        double inc = Math.PI * 2 / Math.pow(2, zoom);
-        double theta = row * inc - Math.PI;
+        double inc = 5;
+        double theta = row * inc - 5;
         //double phi = col * inc - Math.PI*2;
         double phi = col * inc / 2;
 
@@ -247,7 +248,6 @@ public class MyGLRenderer2 implements GLSurfaceView.Renderer {
                         + "   gl_FragColor = v_Color;     \n"     // Pass the color directly through the pipeline.
                         + "}                              \n";
 
-        // Se cambio
         int vertexShaderHandle = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);
 
         if (vertexShaderHandle != 0) {
@@ -360,6 +360,6 @@ public class MyGLRenderer2 implements GLSurfaceView.Renderer {
 
         // Color de la figura, Parametros 2, 3, 4 son RGB, cambiarlos aleatoriamente
         GLES20.glUniform4f(0, 0.0f, 0.0f, 1.0f, 1.0f);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, nVertices);
+        //GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, nVertices);
     }
 }

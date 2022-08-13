@@ -46,7 +46,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
         //return super.onTouchEvent(event);
-        if (System.currentTimeMillis() - timeOfLastZoom > 250 && !zooming) {
+        /*if (System.currentTimeMillis() - timeOfLastZoom > 250 && !zooming) {
             //onPause();
             if (event.getY() > height / 2 && zoom <= 1 || event.getY() <= height / 2 && zoom >= 9)
                 return true;
@@ -66,7 +66,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 }
             });
             //onResume();
-        }
+        }*/
         return true;
     }
 }
