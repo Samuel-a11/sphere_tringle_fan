@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Random;
 
 import static android.opengl.GLES20.*;
 
@@ -102,7 +103,6 @@ public class CircleFan implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl10) {
         glClear(GL_COLOR_BUFFER_BIT); // Clear screen to redraw
-        // TODO: Some of this functionality shouldn't be here
         // Use the created program
         glUseProgram(mProgram);
 
@@ -121,7 +121,7 @@ public class CircleFan implements GLSurfaceView.Renderer {
 //        glUniform4fv(colorHandle, 1, color, 0);
 
         // Draw the whole thing
-        glDrawArrays(GL_TRIANGLES, 0, (sides*5)/COORDS_PER_VERTEX);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, ((sides)*3*2)/COORDS_PER_VERTEX);
         glDisableVertexAttribArray(positionHandle);
     }
 
@@ -163,44 +163,75 @@ public class CircleFan implements GLSurfaceView.Renderer {
      * @param r radius of the circle
      * @param sides how many sides the circle should have
      * @return returns an array of vertexes to draw
-     * TODO: Add coloring
      */
     public float[] drawCircle(float x, float y, float r, int sides) {
-        // Each side is a triangle, a triangle is composed of 3 vertex
-        int nVertices = 3*sides; //
+        if(sides < 3) sides = 3; // Minimum amount of sides should be 3
+        int vertSize = 3*sides*COORDS_PER_VERTEX;
 
-        float[] verticesX = new float[nVertices];
-        float[] verticesY = new float[nVertices];
-
-        // Set center of the circle
-//        verticesX[0] = x;
-//        verticesY[0] = y;
-
-        // Calculate the vertex to draw
-        int counter = 1;
-        for(int i = 0; i < nVertices; i++) {
-            if(i % 3 == 0) { // If it is a multiple of 3 then set the center of the polygon
-                verticesX[i] = x;
-                verticesY[i] = y;
-            } else {
-                verticesX[i] = x + r * (float) Math.cos(counter * 2 * Math.PI / sides);
-                verticesY[i] = y + r * (float) Math.sin(counter * 2 * Math.PI / sides);
-                counter++;
-            }
+        // A vertex is composed of (x, y, r, g, b); position and color
+        float[] vertexes = new float[vertSize];
+        for(int i = 0; i < vertSize-5; i=i+6) {//Create a new triangle (3 vertex) for each iteration
+            int idx = i/6;
+            // Create triangle based on their coordinates
+            float[] triangle = createTriangle(0,0,
+                    x + r * (float) Math.cos((idx+1) * 2 * Math.PI/sides),
+                    y + r * (float) Math.sin((idx+1) * 2 * Math.PI/sides),
+                    x + r * (float) Math.cos((idx+2) * 2 * Math.PI/sides),
+                    y + r * (float) Math.sin((idx+2) * 2 * Math.PI/sides));
+            System.arraycopy(triangle, 0, vertexes, triangle.length*idx, triangle.length);
         }
 
-        // OUTPUT = {1,1,2,2,3,3}
-        // DESIRED = {0,0,1,1,
+        // This is for debugging purposes
+        System.out.println("Number of triangles: " + sides);
+        System.out.println("Number of vertexes:  " + vertSize);
+        for(int i = 0; i < vertexes.length-1; i=i+2) {
+            if(i%3 == 0)
+                System.out.println("Triangle ");
+            System.out.println( "Coord " + (i/2) + ": " + vertexes[i] + ", " + vertexes[i+1]);
+        }
+        return vertexes;
+    }
 
-        // Store all the vertexes in a single array
-        float[] allVertices = new float[2 * nVertices];
-        for(int i = 0; i < nVertices; i++) {
-            allVertices[i * 2]      = verticesX[i];
-            allVertices[i * 2 + 1]  = verticesY[i];
-        }
-        for(int i = 0; i < allVertices.length; i=i+2) {
-            System.out.println( "Coord " + (i/2) + ": " + allVertices[i] + ", " + allVertices[i+1]);
-        }
-        return allVertices;
+    private final Random rand = new Random();
+
+    /**
+     * Create a triangle based on the 3 given coordinates (vertices)
+     * @param x_1 x-axis in first coordinate
+     * @param y_1 y-axis in first coordinate
+     * @param x_2 x-axis in second coordinate
+     * @param y_2 y-axis in second coordinate
+     * @param x_3 x-axis in third coordinate
+     * @param y_3 y-axis in third coordinate
+     * @return an array containing the 3 vertices data
+     */
+    public float[] createTriangle(float x_1, float y_1, float x_2, float y_2, float x_3, float y_3){
+        // Point 1
+        float[] v1 = createVertex(x_1, y_1);
+        // Point 2
+        float[] v2 = createVertex(x_2, y_2);
+        // Point 3
+        float[] v3 = createVertex(x_3, y_3);
+        // Copy the 3 vertices into a single array
+        float[] triangle = new float[3*COORDS_PER_VERTEX];
+        System.arraycopy(v1, 0, triangle, COORDS_PER_VERTEX*0, v1.length);
+        System.arraycopy(v2, 0, triangle, COORDS_PER_VERTEX*1, v2.length);
+        System.arraycopy(v3, 0, triangle, COORDS_PER_VERTEX*2, v3.length);
+        return triangle;
+    }
+
+    /**
+     * Create a new vertex based; a vertex is composed of position and color:
+     * <ul>
+     *     <li> Position = x, y </li>
+     *     <li> Color    = r, g, b</li>
+     * </ul>
+     * @param x position in the x-axis
+     * @param y position in the y-axis
+     * @return returns an array of floats representing the vertex
+     */
+    public float[] createVertex(float x, float y) {
+        // TODO: Add colors
+        return new float[] { x, y //, rand.nextFloat(), rand.nextFloat(), rand.nextFloat()
+        };
     }
 }

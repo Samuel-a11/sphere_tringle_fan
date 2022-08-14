@@ -12,7 +12,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     boolean zooming = false;
     private int zoom, width, height;
-    private MyGLRenderer2 renderer;
+    private CircleFan renderer;
     private long timeOfLastZoom;
 
     public MyGLSurfaceView(Context context) {
@@ -32,7 +32,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         this.height = height;
         this.zoom = zoom;
         // Set the renderer to our demo renderer, defined below.
-        renderer = new MyGLRenderer2(zoom);
+        renderer = new CircleFan(zoom);
         setRenderer(renderer);
         timeOfLastZoom = System.currentTimeMillis();
     }
@@ -54,18 +54,15 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 @Override
                 public void run() {
                     zooming = true;
-                    //renderer.setUp();
-
-                    if (event.getY() > height / 2) // Click en parte de arriba
-                        zoom = renderer.zoom_out();
+                    if (event.getY() < height / 2) // Click en parte de arriba
+                        renderer.increaseSides();
                     else // Click en parte de abajo
-                        zoom = renderer.zoom_in();
+                        renderer.decreaseSides();
                     timeOfLastZoom = System.currentTimeMillis();
 
                     zooming = false;
                 }
             });
-            //onResume();
         }
         return true;
     }
