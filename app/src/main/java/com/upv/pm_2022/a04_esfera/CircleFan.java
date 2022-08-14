@@ -124,7 +124,7 @@ public class CircleFan implements GLSurfaceView.Renderer {
         glEnableVertexAttribArray(colorHandle);
         // Set the attributes of a vertex
         glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX, GL_FLOAT,
-                           false, vertexStride, 0);
+                           false, vertexStride, vertexBuffer);
         glVertexAttribPointer(colorHandle, COLORS_PER_VERTEX, GL_FLOAT,
                               true, vertexStride, vertexBuffer);
 
